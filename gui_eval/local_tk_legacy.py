@@ -1,7 +1,12 @@
+"""
+Doesn't updated, probably needs a few changes
+"""
+
 import os
-from pathlib import Path
 import tkinter as tk
+from pathlib import Path
 from tkinter import Label
+from typing import Any
 
 import keras
 import numpy as np
@@ -13,7 +18,7 @@ IMG_SIZE = (224, 224)
 # Загружаем обученную модель
 models_dir = Path("models")
 models = os.listdir(models_dir)
-model = keras.models.load_model(models_dir.joinpath(models[-1]))  # lates by default
+model: Any = keras.models.load_model(models_dir.joinpath(models[-1]))  # latest by default
 
 # Словарь классов (нужно заменить на реальные классы, которые использовались при обучении)
 class_names = ["Урбанистика", "Фантастика", "Пейзаж"]
@@ -40,8 +45,8 @@ def paste_image():
         if isinstance(img, Image.Image):
             img.thumbnail((300, 300))  # Уменьшаем изображение для отображения
             img_tk = ImageTk.PhotoImage(img)
-            label_image.config(image=img_tk)
-            label_image.image = img_tk  # Сохраняем ссылку на изображение
+            label_image.config(image=img_tk)  # type: ignore
+            label_image.image = img_tk  # type: ignore # Сохраняем ссылку на изображение
 
             # Классифицируем изображение
             img = img.resize((224, 224))

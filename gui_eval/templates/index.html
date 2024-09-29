@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Классификация изображений</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.querySelector('input[type="file"]');
+            const pasteArea = document.getElementById('paste-area');
+
+            // Обрабатываем событие вставки
+            pasteArea.addEventListener('paste', function (event) {
+                const items = event.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].kind === 'file') {
+                        const file = items[i].getAsFile();
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        fileInput.files = dataTransfer.files;
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Классификация изображений</h1>
+
+    <!-- Область для вставки изображения из буфера -->
+    <div id="paste-area"
+        style="border: 2px dashed #aaa; padding: 10px; width: 300px; height: 100px; margin-bottom: 20px;">
+        Вставьте изображение (Ctrl+V) сюда
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <button type="submit">Загрузить изображение</button>
+    </form>
+
+    {% if result %}
+    <h2>Результат:</h2>
+    <p>{{ result }}</p>
+    {% endif %}
+</body>
+
+</html>

@@ -8,9 +8,10 @@ import fire
 from PIL import Image
 from tqdm import tqdm
 
-type StrPath = str | Path
+type StrPath = str | Path  # TODO: Update wsl to python 3.12
 
 
+# p = Path(r'C:\Users\akrio\Desktop\Test').glob('**/*')  # possible better implementation
 def listdir_recursive(path: StrPath = ".") -> Iterable[Path]:
     for entry in os.listdir(path):
         p = Path(path)
@@ -32,7 +33,7 @@ def resize_images(
 
     paths = list(listdir_recursive(input_folder))
     logging.info(f"Found {len(paths)} images in {input_folder}")
-    logging.debug(f"First 5 paths:\n{'\n'.join(p.__str__() for p in paths[:5])}")
+    logging.debug(f"First 5 paths:\n{'\n'.join(p.__str__() for p in paths[:5])}") # don't use TODO Update to python 3.12
     # replace input_folder prefix to output_folder
     if max_images is None:
         max_images = len(paths)
