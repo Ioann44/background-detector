@@ -2,15 +2,18 @@ from datetime import datetime
 from pathlib import Path
 
 from keras import layers, models
-from keras.api.applications import MobileNetV2
+from keras.api.applications import MobileNetV3Large
 from keras.api.applications.mobilenet_v2 import preprocess_input
+from keras.api.callbacks import EarlyStopping
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
 
 # Параметры
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 NUM_CLASSES = 3  # Пейзаж, Урбанистика, Фантастика
-EPOCHS = 10
+EPOCHS = 300
+
+early_stopping = EarlyStopping(monitor="val_loss", patience=50, restore_best_weights=True)
 
 # Создаем генератор данных с аугментацией и делением на обучающую и валидационную выборки
 datagen = ImageDataGenerator(
@@ -42,7 +45,7 @@ validation_generator = datagen.flow_from_directory(
 print("Классы:", train_generator.class_indices)
 
 # Модель на базе MobileNetV2
-base_model = MobileNetV2(input_shape=IMG_SIZE + (3,), include_top=False, weights="imagenet")
+base_model = MobileNetV3Large(input_shape=IMG_SIZE + (3,), include_top=False)
 base_model.trainable = False  # Заморозим веса предобученной части
 
 # Добавляем полносвязную голову
@@ -50,8 +53,8 @@ model = models.Sequential(
     [
         base_model,
         layers.GlobalAveragePooling2D(),
-        layers.Dense(128, activation="relu"),
-        layers.Dropout(0.5),
+        layers.Dense(units=128, activation="relu"),
+        layers.Dropout(0.4),
         layers.Dense(NUM_CLASSES, activation="softmax"),  # 3 класса
     ]
 )
@@ -60,7 +63,7 @@ model = models.Sequential(
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
 # Тренировка модели
-history = model.fit(train_generator, epochs=EPOCHS, validation_data=validation_generator)
+history = model.fit(train_generator, epochs=EPOCHS, validation_data=validation_generator, callbacks=[early_stopping])
 
 # Сохранение модели
 date = datetime.now()
