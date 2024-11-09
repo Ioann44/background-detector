@@ -15,7 +15,9 @@ IMG_SIZE = (224, 224)
 # Загружаем обученную модель
 models_dir = app_dir.joinpath("models")
 models = sorted(models_dir.iterdir())
-model: Any = keras.models.load_model(models_dir.joinpath(models[-1]))  # latest by default
+model_name = models_dir.joinpath(models[-1])
+print(f"Model: {model_name}")
+model: Any = keras.models.load_model(model_name)  # latest by default
 
 # Словарь классов (нужно заменить на реальные классы, которые использовались при обучении)
 class_names = ["Урбанистика", "Фантастика", "Пейзаж"]

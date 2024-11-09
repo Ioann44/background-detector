@@ -2,7 +2,7 @@ from datetime import datetime
 from pathlib import Path
 
 from keras import layers, models
-from keras.api.applications import MobileNetV3Large
+from keras.api.applications import InceptionV3
 from keras.api.applications.mobilenet_v2 import preprocess_input
 from keras.api.callbacks import EarlyStopping
 from keras.src.legacy.preprocessing.image import ImageDataGenerator
@@ -45,7 +45,7 @@ validation_generator = datagen.flow_from_directory(
 print("Классы:", train_generator.class_indices)
 
 # Модель на базе MobileNetV2
-base_model = MobileNetV3Large(input_shape=IMG_SIZE + (3,), include_top=False)
+base_model = InceptionV3(input_shape=IMG_SIZE + (3,), include_top=False)
 base_model.trainable = False  # Заморозим веса предобученной части
 
 # Добавляем полносвязную голову
@@ -63,7 +63,9 @@ model = models.Sequential(
 model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
 # Тренировка модели
-history = model.fit(train_generator, epochs=EPOCHS, validation_data=validation_generator, callbacks=[early_stopping])
+history = model.fit(
+    train_generator, epochs=EPOCHS, validation_data=validation_generator, callbacks=[early_stopping]
+)
 
 # Сохранение модели
 date = datetime.now()
