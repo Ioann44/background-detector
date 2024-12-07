@@ -44,7 +44,6 @@ validation_generator = datagen.flow_from_directory(
 # Вывод информации о классах
 print("Классы:", train_generator.class_indices)
 
-# Модель на базе MobileNetV2
 base_model = InceptionV3(input_shape=IMG_SIZE + (3,), include_top=False)
 base_model.trainable = False  # Заморозим веса предобученной части
 
